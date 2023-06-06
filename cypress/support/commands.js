@@ -23,3 +23,37 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('loginViaApi', (userEmail = 'draganaa@gmail.com', userPass = 'pokusavam100') => {
+    cy.request({
+        url: 'https://gallery-api.vivifyideas.com/api/auth/login',
+        method: 'POST',
+        body: {
+            email: userEmail,
+            password: userPass
+        }
+    }).its('body').then((odgovor) => {
+        expect(odgovor.access_token).to.be.a('string');
+        expect(odgovor.token_type).eq('bearer');
+        
+        window.localStorage.setItem('token', odgovor.access_token)
+    })
+
+})
+
+Cypress.Commands.add('registerUserViaApi', (firstName, lastName, email, pass, passConfirm, acceptTerms = true) => {
+    cy.request({
+        url: 'https://gallery-api.vivifyideas.com/api/auth/register',
+        method: 'POST',
+        body: {
+            "first_name": firstName,
+            "last_name": lastName,
+            "email": email,
+            "password": pass,
+            "password_confirmation": passConfirm,
+            "terms_and_conditions": acceptTerms
+        }
+    }).its('body').then((odgovor) => {
+
+    })
+})
